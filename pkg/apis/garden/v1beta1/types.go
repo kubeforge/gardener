@@ -72,6 +72,9 @@ type CloudProfileSpec struct {
 	// OpenStack is the profile specification for the OpenStack cloud.
 	// +optional
 	OpenStack *OpenStackProfile `json:"openstack,omitempty"`
+	// KubeVirt is the profile specification for the KubeVirt cloud.
+	// +optional
+	KubeVirt *KubeVirtProfile `json:"kubevirt,omitempty"`
 	// Alicloud is the profile specification for the Alibaba cloud.
 	// +optional
 	Alicloud *AlicloudProfile `json:"alicloud,omitempty"`
@@ -202,6 +205,34 @@ type GCPMachineImage struct {
 	Name MachineImageName `json:"name"`
 	// Image is the technical name of the image. It contains the image name and the Google Cloud project.
 	// Example: projects/<name>/global/images/version23
+	Image string `json:"image"`
+}
+
+// KubeVirtProfile defines certain constraints and definitions for the KubeVirt cloud.
+type KubeVirtProfile struct {
+	// Constraints is an object containing constraints for certain values in the Shoot specification.
+	Constraints KubeVirtConstraints `json:"constraints"`
+}
+
+// KubeVirtConstraints is an object containing constraints for certain values in the Shoot specification.
+type KubeVirtConstraints struct {
+	// DNSProviders contains constraints regarding allowed values of the 'dns.provider' block in the Shoot specification.
+	DNSProviders []DNSProviderConstraint `json:"dnsProviders"`
+	// Kubernetes contains constraints regarding allowed values of the 'kubernetes' block in the Shoot specification.
+	Kubernetes KubernetesConstraints `json:"kubernetes"`
+	// MachineImages contains constraints regarding allowed values for machine images in the Shoot specification.
+	MachineImages []KubeVirtMachineImage `json:"machineImages"`
+	// MachineTypes contains constraints regarding allowed values for machine types in the 'workers' block in the Shoot specification.
+	MachineTypes []KubeVirtMachineType `json:"machineTypes"`
+	// Zones contains constraints regarding allowed values for 'zones' block in the Shoot specification.
+	Zones []Zone `json:"zones,omitempty"`
+}
+
+// KubeVirtMachineImage defines the name of the machine image in the KubeVirt environment.
+type KubeVirtMachineImage struct {
+	// Name is the name of the image.
+	Name MachineImageName `json:"name"`
+	// Image is the technical name of the image.
 	Image string `json:"image"`
 }
 
@@ -344,6 +375,15 @@ type MachineType struct {
 
 // OpenStackMachineType contains certain properties of a machine type in OpenStack
 type OpenStackMachineType struct {
+	MachineType `json:",inline"`
+	// VolumeType is the type of that volume.
+	VolumeType string `json:"volumeType"`
+	// VolumeSize is the amount of disk storage for this machine type.
+	VolumeSize resource.Quantity `json:"volumeSize"`
+}
+
+// KubeVirtMachineType contains certain properties of a machine type in KubeVirt
+type KubeVirtMachineType struct {
 	MachineType `json:",inline"`
 	// VolumeType is the type of that volume.
 	VolumeType string `json:"volumeType"`
@@ -745,6 +785,9 @@ type Cloud struct {
 	// OpenStack contains the Shoot specification for the OpenStack cloud.
 	// +optional
 	OpenStack *OpenStackCloud `json:"openstack,omitempty"`
+	// KubeVirt contains the Shoot specification for the KubeVirt cloud.
+	// +optional
+	KubeVirt *KubeVirtCloud `json:"kubevirt,omitempty"`
 	// Alicloud contains the Shoot specification for the Alibaba cloud.
 	// +optional
 	Alicloud *Alicloud `json:"alicloud,omitempty"`
@@ -990,6 +1033,22 @@ type OpenStackWorker struct {
 	Worker `json:",inline"`
 }
 
+// KubeVirtCloud contains the Shoot specification for KubeVirt.
+type KubeVirtCloud struct {
+	// MachineImage holds information about the machine image to use for all workers.
+	// It will default to the first image stated in the referenced CloudProfile if no
+	// value has been provided.
+	// +optional
+	MachineImage *KubeVirtMachineImage `json:"machineImage,omitempty"`
+	// Workers is a list of worker groups.
+	Workers []KubeVirtWorker `json:"workers"`
+}
+
+// KubeVirtWorker is the definition of a worker group.
+type KubeVirtWorker struct {
+	Worker `json:",inline"`
+}
+
 // Local contains the Shoot specification for local provider.
 type Local struct {
 	// Networks holds information about the Kubernetes and infrastructure networks.
@@ -1183,6 +1242,8 @@ const (
 	CloudProviderOpenStack CloudProvider = "openstack"
 	// CloudProviderAlicloud is a constant for the Alibaba cloud provider.
 	CloudProviderAlicloud CloudProvider = "alicloud"
+	// CloudProviderKubeVirt is a constant for the KubeVirt cloud provider.
+	CloudProviderKubeVirt CloudProvider = "kubevirt"
 	// CloudProviderLocal is a constant for the development provider.
 	CloudProviderLocal CloudProvider = "local"
 )

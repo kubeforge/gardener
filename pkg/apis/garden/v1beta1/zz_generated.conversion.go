@@ -693,6 +693,66 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
+	if err := s.AddGeneratedConversionFunc((*KubeVirtCloud)(nil), (*garden.KubeVirtCloud)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(a.(*KubeVirtCloud), b.(*garden.KubeVirtCloud), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*garden.KubeVirtCloud)(nil), (*KubeVirtCloud)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud(a.(*garden.KubeVirtCloud), b.(*KubeVirtCloud), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*KubeVirtConstraints)(nil), (*garden.KubeVirtConstraints)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeVirtConstraints_To_garden_KubeVirtConstraints(a.(*KubeVirtConstraints), b.(*garden.KubeVirtConstraints), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*garden.KubeVirtConstraints)(nil), (*KubeVirtConstraints)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_garden_KubeVirtConstraints_To_v1beta1_KubeVirtConstraints(a.(*garden.KubeVirtConstraints), b.(*KubeVirtConstraints), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*KubeVirtMachineImage)(nil), (*garden.KubeVirtMachineImage)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeVirtMachineImage_To_garden_KubeVirtMachineImage(a.(*KubeVirtMachineImage), b.(*garden.KubeVirtMachineImage), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*garden.KubeVirtMachineImage)(nil), (*KubeVirtMachineImage)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_garden_KubeVirtMachineImage_To_v1beta1_KubeVirtMachineImage(a.(*garden.KubeVirtMachineImage), b.(*KubeVirtMachineImage), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*KubeVirtMachineType)(nil), (*garden.KubeVirtMachineType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeVirtMachineType_To_garden_KubeVirtMachineType(a.(*KubeVirtMachineType), b.(*garden.KubeVirtMachineType), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*garden.KubeVirtMachineType)(nil), (*KubeVirtMachineType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_garden_KubeVirtMachineType_To_v1beta1_KubeVirtMachineType(a.(*garden.KubeVirtMachineType), b.(*KubeVirtMachineType), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*KubeVirtProfile)(nil), (*garden.KubeVirtProfile)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeVirtProfile_To_garden_KubeVirtProfile(a.(*KubeVirtProfile), b.(*garden.KubeVirtProfile), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*garden.KubeVirtProfile)(nil), (*KubeVirtProfile)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_garden_KubeVirtProfile_To_v1beta1_KubeVirtProfile(a.(*garden.KubeVirtProfile), b.(*KubeVirtProfile), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*KubeVirtWorker)(nil), (*garden.KubeVirtWorker)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeVirtWorker_To_garden_KubeVirtWorker(a.(*KubeVirtWorker), b.(*garden.KubeVirtWorker), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*garden.KubeVirtWorker)(nil), (*KubeVirtWorker)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_garden_KubeVirtWorker_To_v1beta1_KubeVirtWorker(a.(*garden.KubeVirtWorker), b.(*KubeVirtWorker), scope)
+	}); err != nil {
+		return err
+	}
 	if err := s.AddGeneratedConversionFunc((*KubeletConfig)(nil), (*garden.KubeletConfig)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_KubeletConfig_To_garden_KubeletConfig(a.(*KubeletConfig), b.(*garden.KubeletConfig), scope)
 	}); err != nil {
@@ -2293,6 +2353,15 @@ func autoConvert_v1beta1_Cloud_To_garden_Cloud(in *Cloud, out *garden.Cloud, s c
 	} else {
 		out.OpenStack = nil
 	}
+	if in.KubeVirt != nil {
+		in, out := &in.KubeVirt, &out.KubeVirt
+		*out = new(garden.KubeVirtCloud)
+		if err := Convert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.KubeVirt = nil
+	}
 	if in.Alicloud != nil {
 		in, out := &in.Alicloud, &out.Alicloud
 		*out = new(garden.Alicloud)
@@ -2351,6 +2420,15 @@ func autoConvert_garden_Cloud_To_v1beta1_Cloud(in *garden.Cloud, out *Cloud, s c
 		}
 	} else {
 		out.OpenStack = nil
+	}
+	if in.KubeVirt != nil {
+		in, out := &in.KubeVirt, &out.KubeVirt
+		*out = new(KubeVirtCloud)
+		if err := Convert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud(*in, *out, s); err != nil {
+			return err
+		}
+	} else {
+		out.KubeVirt = nil
 	}
 	if in.Alicloud != nil {
 		in, out := &in.Alicloud, &out.Alicloud
@@ -3136,6 +3214,178 @@ func autoConvert_garden_KubeSchedulerConfig_To_v1beta1_KubeSchedulerConfig(in *g
 // Convert_garden_KubeSchedulerConfig_To_v1beta1_KubeSchedulerConfig is an autogenerated conversion function.
 func Convert_garden_KubeSchedulerConfig_To_v1beta1_KubeSchedulerConfig(in *garden.KubeSchedulerConfig, out *KubeSchedulerConfig, s conversion.Scope) error {
 	return autoConvert_garden_KubeSchedulerConfig_To_v1beta1_KubeSchedulerConfig(in, out, s)
+}
+
+func autoConvert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(in *KubeVirtCloud, out *garden.KubeVirtCloud, s conversion.Scope) error {
+	out.MachineImage = (*garden.KubeVirtMachineImage)(unsafe.Pointer(in.MachineImage))
+	if in.Workers != nil {
+		in, out := &in.Workers, &out.Workers
+		*out = make([]garden.KubeVirtWorker, len(*in))
+		for i := range *in {
+			if err := Convert_v1beta1_KubeVirtWorker_To_garden_KubeVirtWorker(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Workers = nil
+	}
+	return nil
+}
+
+// Convert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud is an autogenerated conversion function.
+func Convert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(in *KubeVirtCloud, out *garden.KubeVirtCloud, s conversion.Scope) error {
+	return autoConvert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(in, out, s)
+}
+
+func autoConvert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud(in *garden.KubeVirtCloud, out *KubeVirtCloud, s conversion.Scope) error {
+	out.MachineImage = (*KubeVirtMachineImage)(unsafe.Pointer(in.MachineImage))
+	if in.Workers != nil {
+		in, out := &in.Workers, &out.Workers
+		*out = make([]KubeVirtWorker, len(*in))
+		for i := range *in {
+			if err := Convert_garden_KubeVirtWorker_To_v1beta1_KubeVirtWorker(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Workers = nil
+	}
+	return nil
+}
+
+// Convert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud is an autogenerated conversion function.
+func Convert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud(in *garden.KubeVirtCloud, out *KubeVirtCloud, s conversion.Scope) error {
+	return autoConvert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud(in, out, s)
+}
+
+func autoConvert_v1beta1_KubeVirtConstraints_To_garden_KubeVirtConstraints(in *KubeVirtConstraints, out *garden.KubeVirtConstraints, s conversion.Scope) error {
+	out.DNSProviders = *(*[]garden.DNSProviderConstraint)(unsafe.Pointer(&in.DNSProviders))
+	if err := Convert_v1beta1_KubernetesConstraints_To_garden_KubernetesConstraints(&in.Kubernetes, &out.Kubernetes, s); err != nil {
+		return err
+	}
+	out.MachineImages = *(*[]garden.KubeVirtMachineImage)(unsafe.Pointer(&in.MachineImages))
+	out.MachineTypes = *(*[]garden.KubeVirtMachineType)(unsafe.Pointer(&in.MachineTypes))
+	out.Zones = *(*[]garden.Zone)(unsafe.Pointer(&in.Zones))
+	return nil
+}
+
+// Convert_v1beta1_KubeVirtConstraints_To_garden_KubeVirtConstraints is an autogenerated conversion function.
+func Convert_v1beta1_KubeVirtConstraints_To_garden_KubeVirtConstraints(in *KubeVirtConstraints, out *garden.KubeVirtConstraints, s conversion.Scope) error {
+	return autoConvert_v1beta1_KubeVirtConstraints_To_garden_KubeVirtConstraints(in, out, s)
+}
+
+func autoConvert_garden_KubeVirtConstraints_To_v1beta1_KubeVirtConstraints(in *garden.KubeVirtConstraints, out *KubeVirtConstraints, s conversion.Scope) error {
+	out.DNSProviders = *(*[]DNSProviderConstraint)(unsafe.Pointer(&in.DNSProviders))
+	if err := Convert_garden_KubernetesConstraints_To_v1beta1_KubernetesConstraints(&in.Kubernetes, &out.Kubernetes, s); err != nil {
+		return err
+	}
+	out.MachineImages = *(*[]KubeVirtMachineImage)(unsafe.Pointer(&in.MachineImages))
+	out.MachineTypes = *(*[]KubeVirtMachineType)(unsafe.Pointer(&in.MachineTypes))
+	out.Zones = *(*[]Zone)(unsafe.Pointer(&in.Zones))
+	return nil
+}
+
+// Convert_garden_KubeVirtConstraints_To_v1beta1_KubeVirtConstraints is an autogenerated conversion function.
+func Convert_garden_KubeVirtConstraints_To_v1beta1_KubeVirtConstraints(in *garden.KubeVirtConstraints, out *KubeVirtConstraints, s conversion.Scope) error {
+	return autoConvert_garden_KubeVirtConstraints_To_v1beta1_KubeVirtConstraints(in, out, s)
+}
+
+func autoConvert_v1beta1_KubeVirtMachineImage_To_garden_KubeVirtMachineImage(in *KubeVirtMachineImage, out *garden.KubeVirtMachineImage, s conversion.Scope) error {
+	out.Name = garden.MachineImageName(in.Name)
+	out.Image = in.Image
+	return nil
+}
+
+// Convert_v1beta1_KubeVirtMachineImage_To_garden_KubeVirtMachineImage is an autogenerated conversion function.
+func Convert_v1beta1_KubeVirtMachineImage_To_garden_KubeVirtMachineImage(in *KubeVirtMachineImage, out *garden.KubeVirtMachineImage, s conversion.Scope) error {
+	return autoConvert_v1beta1_KubeVirtMachineImage_To_garden_KubeVirtMachineImage(in, out, s)
+}
+
+func autoConvert_garden_KubeVirtMachineImage_To_v1beta1_KubeVirtMachineImage(in *garden.KubeVirtMachineImage, out *KubeVirtMachineImage, s conversion.Scope) error {
+	out.Name = MachineImageName(in.Name)
+	out.Image = in.Image
+	return nil
+}
+
+// Convert_garden_KubeVirtMachineImage_To_v1beta1_KubeVirtMachineImage is an autogenerated conversion function.
+func Convert_garden_KubeVirtMachineImage_To_v1beta1_KubeVirtMachineImage(in *garden.KubeVirtMachineImage, out *KubeVirtMachineImage, s conversion.Scope) error {
+	return autoConvert_garden_KubeVirtMachineImage_To_v1beta1_KubeVirtMachineImage(in, out, s)
+}
+
+func autoConvert_v1beta1_KubeVirtMachineType_To_garden_KubeVirtMachineType(in *KubeVirtMachineType, out *garden.KubeVirtMachineType, s conversion.Scope) error {
+	if err := Convert_v1beta1_MachineType_To_garden_MachineType(&in.MachineType, &out.MachineType, s); err != nil {
+		return err
+	}
+	out.VolumeType = in.VolumeType
+	out.VolumeSize = in.VolumeSize
+	return nil
+}
+
+// Convert_v1beta1_KubeVirtMachineType_To_garden_KubeVirtMachineType is an autogenerated conversion function.
+func Convert_v1beta1_KubeVirtMachineType_To_garden_KubeVirtMachineType(in *KubeVirtMachineType, out *garden.KubeVirtMachineType, s conversion.Scope) error {
+	return autoConvert_v1beta1_KubeVirtMachineType_To_garden_KubeVirtMachineType(in, out, s)
+}
+
+func autoConvert_garden_KubeVirtMachineType_To_v1beta1_KubeVirtMachineType(in *garden.KubeVirtMachineType, out *KubeVirtMachineType, s conversion.Scope) error {
+	if err := Convert_garden_MachineType_To_v1beta1_MachineType(&in.MachineType, &out.MachineType, s); err != nil {
+		return err
+	}
+	out.VolumeType = in.VolumeType
+	out.VolumeSize = in.VolumeSize
+	return nil
+}
+
+// Convert_garden_KubeVirtMachineType_To_v1beta1_KubeVirtMachineType is an autogenerated conversion function.
+func Convert_garden_KubeVirtMachineType_To_v1beta1_KubeVirtMachineType(in *garden.KubeVirtMachineType, out *KubeVirtMachineType, s conversion.Scope) error {
+	return autoConvert_garden_KubeVirtMachineType_To_v1beta1_KubeVirtMachineType(in, out, s)
+}
+
+func autoConvert_v1beta1_KubeVirtProfile_To_garden_KubeVirtProfile(in *KubeVirtProfile, out *garden.KubeVirtProfile, s conversion.Scope) error {
+	if err := Convert_v1beta1_KubeVirtConstraints_To_garden_KubeVirtConstraints(&in.Constraints, &out.Constraints, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1beta1_KubeVirtProfile_To_garden_KubeVirtProfile is an autogenerated conversion function.
+func Convert_v1beta1_KubeVirtProfile_To_garden_KubeVirtProfile(in *KubeVirtProfile, out *garden.KubeVirtProfile, s conversion.Scope) error {
+	return autoConvert_v1beta1_KubeVirtProfile_To_garden_KubeVirtProfile(in, out, s)
+}
+
+func autoConvert_garden_KubeVirtProfile_To_v1beta1_KubeVirtProfile(in *garden.KubeVirtProfile, out *KubeVirtProfile, s conversion.Scope) error {
+	if err := Convert_garden_KubeVirtConstraints_To_v1beta1_KubeVirtConstraints(&in.Constraints, &out.Constraints, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_garden_KubeVirtProfile_To_v1beta1_KubeVirtProfile is an autogenerated conversion function.
+func Convert_garden_KubeVirtProfile_To_v1beta1_KubeVirtProfile(in *garden.KubeVirtProfile, out *KubeVirtProfile, s conversion.Scope) error {
+	return autoConvert_garden_KubeVirtProfile_To_v1beta1_KubeVirtProfile(in, out, s)
+}
+
+func autoConvert_v1beta1_KubeVirtWorker_To_garden_KubeVirtWorker(in *KubeVirtWorker, out *garden.KubeVirtWorker, s conversion.Scope) error {
+	if err := Convert_v1beta1_Worker_To_garden_Worker(&in.Worker, &out.Worker, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_v1beta1_KubeVirtWorker_To_garden_KubeVirtWorker is an autogenerated conversion function.
+func Convert_v1beta1_KubeVirtWorker_To_garden_KubeVirtWorker(in *KubeVirtWorker, out *garden.KubeVirtWorker, s conversion.Scope) error {
+	return autoConvert_v1beta1_KubeVirtWorker_To_garden_KubeVirtWorker(in, out, s)
+}
+
+func autoConvert_garden_KubeVirtWorker_To_v1beta1_KubeVirtWorker(in *garden.KubeVirtWorker, out *KubeVirtWorker, s conversion.Scope) error {
+	if err := Convert_garden_Worker_To_v1beta1_Worker(&in.Worker, &out.Worker, s); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Convert_garden_KubeVirtWorker_To_v1beta1_KubeVirtWorker is an autogenerated conversion function.
+func Convert_garden_KubeVirtWorker_To_v1beta1_KubeVirtWorker(in *garden.KubeVirtWorker, out *KubeVirtWorker, s conversion.Scope) error {
+	return autoConvert_garden_KubeVirtWorker_To_v1beta1_KubeVirtWorker(in, out, s)
 }
 
 func autoConvert_v1beta1_KubeletConfig_To_garden_KubeletConfig(in *KubeletConfig, out *garden.KubeletConfig, s conversion.Scope) error {

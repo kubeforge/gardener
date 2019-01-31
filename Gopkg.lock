@@ -524,6 +524,14 @@
   version = "v1.0.2"
 
 [[projects]]
+  branch = "kubevirt"
+  digest = "1:772e3e1e857158163ec94e67aec8c3beb96a62188ca6e8346df99f30065a8640"
+  name = "github.com/kubeforge/machine-controller-manager"
+  packages = ["pkg/apis/machine/v1alpha1"]
+  pruneopts = "NUT"
+  revision = "a0b8fd35efcf3e4f09cffd4e220c00eae382d047"
+
+[[projects]]
   branch = "master"
   digest = "1:84a5a2b67486d5d67060ac393aa255d05d24ed5ee41daecd5635ec22657b6492"
   name = "github.com/mailru/easyjson"
@@ -1642,6 +1650,7 @@
     "github.com/golang/protobuf/proto",
     "github.com/hashicorp/go-multierror",
     "github.com/json-iterator/go",
+    "github.com/kubeforge/machine-controller-manager/pkg/apis/machine/v1alpha1",
     "github.com/mholt/archiver",
     "github.com/miekg/dns",
     "github.com/onsi/ginkgo",
@@ -1775,6 +1784,7 @@
     "k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset/typed/apiregistration/v1beta1",
     "k8s.io/kube-openapi/cmd/openapi-gen",
     "k8s.io/kube-openapi/pkg/common",
+    "kubevirt.io/kubevirt/pkg/api/v1",
     "sigs.k8s.io/controller-runtime/pkg/client",
     "sigs.k8s.io/controller-runtime/pkg/client/apiutil",
     "sigs.k8s.io/controller-runtime/pkg/client/fake",

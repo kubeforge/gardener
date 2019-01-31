@@ -5,7 +5,7 @@ package externalversions
 import (
 	"fmt"
 
-	v1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
+	v1alpha1 "github.com/kubeforge/machine-controller-manager/pkg/apis/machine/v1alpha1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )
@@ -45,6 +45,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1alpha1().AzureMachineClasses().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("gcpmachineclasses"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1alpha1().GCPMachineClasses().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("kubevirtmachineclasses"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1alpha1().KubeVirtMachineClasses().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("machines"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Machine().V1alpha1().Machines().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("machinedeployments"):

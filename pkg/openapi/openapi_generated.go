@@ -113,6 +113,12 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeLego":                      schema_pkg_apis_garden_v1beta1_KubeLego(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeProxyConfig":               schema_pkg_apis_garden_v1beta1_KubeProxyConfig(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeSchedulerConfig":           schema_pkg_apis_garden_v1beta1_KubeSchedulerConfig(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtCloud":                 schema_pkg_apis_garden_v1beta1_KubeVirtCloud(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtConstraints":           schema_pkg_apis_garden_v1beta1_KubeVirtConstraints(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage":          schema_pkg_apis_garden_v1beta1_KubeVirtMachineImage(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineType":           schema_pkg_apis_garden_v1beta1_KubeVirtMachineType(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtProfile":               schema_pkg_apis_garden_v1beta1_KubeVirtProfile(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker":                schema_pkg_apis_garden_v1beta1_KubeVirtWorker(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeletConfig":                 schema_pkg_apis_garden_v1beta1_KubeletConfig(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.Kubernetes":                    schema_pkg_apis_garden_v1beta1_Kubernetes(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubernetesConfig":              schema_pkg_apis_garden_v1beta1_KubernetesConfig(ref),
@@ -2496,6 +2502,12 @@ func schema_pkg_apis_garden_v1beta1_Cloud(ref common.ReferenceCallback) common.O
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.OpenStackCloud"),
 						},
 					},
+					"kubevirt": {
+						SchemaProps: spec.SchemaProps{
+							Description: "KubeVirt contains the Shoot specification for the KubeVirt cloud.",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtCloud"),
+						},
+					},
 					"alicloud": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Alicloud contains the Shoot specification for the Alibaba cloud.",
@@ -2513,7 +2525,7 @@ func schema_pkg_apis_garden_v1beta1_Cloud(ref common.ReferenceCallback) common.O
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.AWSCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.Alicloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.AzureCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.GCPCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.Local", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.OpenStackCloud", "k8s.io/api/core/v1.LocalObjectReference"},
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.AWSCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.Alicloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.AzureCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.GCPCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtCloud", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.Local", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.OpenStackCloud", "k8s.io/api/core/v1.LocalObjectReference"},
 	}
 }
 
@@ -3668,6 +3680,277 @@ func schema_pkg_apis_garden_v1beta1_KubeSchedulerConfig(ref common.ReferenceCall
 			},
 		},
 		Dependencies: []string{},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtCloud(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtCloud contains the Shoot specification for KubeVirt.",
+				Properties: map[string]spec.Schema{
+					"machineImage": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MachineImage holds information about the machine image to use for all workers. It will default to the first image stated in the referenced CloudProfile if no value has been provided.",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage"),
+						},
+					},
+					"workers": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Workers is a list of worker groups.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"workers"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker"},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtConstraints(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtConstraints is an object containing constraints for certain values in the Shoot specification.",
+				Properties: map[string]spec.Schema{
+					"dnsProviders": {
+						SchemaProps: spec.SchemaProps{
+							Description: "DNSProviders contains constraints regarding allowed values of the 'dns.provider' block in the Shoot specification.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.DNSProviderConstraint"),
+									},
+								},
+							},
+						},
+					},
+					"kubernetes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kubernetes contains constraints regarding allowed values of the 'kubernetes' block in the Shoot specification.",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubernetesConstraints"),
+						},
+					},
+					"machineImages": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MachineImages contains constraints regarding allowed values for machine images in the Shoot specification.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage"),
+									},
+								},
+							},
+						},
+					},
+					"machineTypes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MachineTypes contains constraints regarding allowed values for machine types in the 'workers' block in the Shoot specification.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineType"),
+									},
+								},
+							},
+						},
+					},
+					"zones": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Zones contains constraints regarding allowed values for 'zones' block in the Shoot specification.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.Zone"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"dnsProviders", "kubernetes", "machineImages", "machineTypes", "zones"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.DNSProviderConstraint", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineType", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubernetesConstraints", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.Zone"},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtMachineImage(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtMachineImage defines the name of the machine image in the KubeVirt environment.",
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name is the name of the image.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"image": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Image is the technical name of the image.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+				Required: []string{"name", "image"},
+			},
+		},
+		Dependencies: []string{},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtMachineType(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtMachineType contains certain properties of a machine type in KubeVirt",
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name is the name of the machine type.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"usable": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Usable defines if the machine type can be used for shoot clusters.",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"cpu": {
+						SchemaProps: spec.SchemaProps{
+							Description: "CPU is the number of CPUs for this machine type.",
+							Ref:         ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+					"gpu": {
+						SchemaProps: spec.SchemaProps{
+							Description: "GPU is the number of GPUs for this machine type.",
+							Ref:         ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+					"memory": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Memory is the amount of memory for this machine type.",
+							Ref:         ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+					"volumeType": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VolumeType is the type of that volume.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"volumeSize": {
+						SchemaProps: spec.SchemaProps{
+							Description: "VolumeSize is the amount of disk storage for this machine type.",
+							Ref:         ref("k8s.io/apimachinery/pkg/api/resource.Quantity"),
+						},
+					},
+				},
+				Required: []string{"name", "cpu", "gpu", "memory", "volumeType", "volumeSize"},
+			},
+		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtProfile(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtProfile defines certain constraints and definitions for the KubeVirt cloud.",
+				Properties: map[string]spec.Schema{
+					"constraints": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Constraints is an object containing constraints for certain values in the Shoot specification.",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtConstraints"),
+						},
+					},
+				},
+				Required: []string{"constraints"},
+			},
+		},
+		Dependencies: []string{
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtConstraints"},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtWorker(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtWorker is the definition of a worker group.",
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name is the name of the worker group.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"machineType": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MachineType is the machine type of the worker group.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"autoScalerMin": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AutoScalerMin is the minimum number of VMs to create.",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"autoScalerMax": {
+						SchemaProps: spec.SchemaProps{
+							Description: "AutoScalerMin is the maximum number of VMs to create.",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"maxSurge": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MaxSurge is maximum number of VMs that are created during an update.",
+							Ref:         ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+						},
+					},
+					"maxUnavailable": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MaxUnavailable is the maximum number of VMs that can be unavailable during an update.",
+							Ref:         ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+						},
+					},
+				},
+				Required: []string{"name", "machineType", "autoScalerMin", "autoScalerMax"},
+			},
+		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/util/intstr.IntOrString"},
 	}
 }
 
