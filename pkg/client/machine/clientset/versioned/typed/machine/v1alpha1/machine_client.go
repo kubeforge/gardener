@@ -20,7 +20,7 @@ package v1alpha1
 
 import (
 	"github.com/gardener/gardener/pkg/client/machine/clientset/versioned/scheme"
-	v1alpha1 "github.com/kubeforge/machine-controller-manager/pkg/apis/machine/v1alpha1"
+	v1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
 )

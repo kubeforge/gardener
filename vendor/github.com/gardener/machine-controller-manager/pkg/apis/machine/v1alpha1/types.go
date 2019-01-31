@@ -1160,6 +1160,17 @@ const (
 
 	// PacketAPIKey is a constant for a key name that is part of the Packet cloud credentials
 	PacketAPIKey string = "packetAPIKey"
+
+	// KubeVirtClusterName                     string = "clusterName"
+	// KubeVirtClusterServer                   string = "clusterServer"
+	// KubeVirtClusterCertificateAuthorityData string = "clusterCertificateAuthorityData"
+	// KubeVirtAuthInfoName                    string = "authInfoName"
+	// KubeVirtAuthInfoClientCertificateData   string = "authInfoClientCertificateData"
+	// KubeVirtAuthInfoClientKeyData           string = "authInfoClientKeyData"
+	// KubeVirtContextName                     string = "contextName"
+	// KubeVirtContextNamespace                string = "contextNamespace"
+	KubeVirtKubeConfig string = "kubeconfig"
+	KubeVirtNamespace  string = "namespace"
 )
 
 /********************** AlicloudMachineClass APIs ***************/
@@ -1269,4 +1280,64 @@ type PacketMachineClassSpec struct {
 type PacketSSHKeySpec struct {
 	ID          string `json:"id"`
 	Fingerprint string `json:"fingerprint"`
+}
+
+/********************** KubeVirtMachineClass APIs ***************/
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// KubeVirtMachineClass TODO
+type KubeVirtMachineClass struct {
+	// +optional
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	// +optional
+	metav1.TypeMeta `json:",inline"`
+
+	// +optional
+	Spec KubeVirtMachineClassSpec `json:"spec,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// KubeVirtMachineClassList is a collection of KubeVirtMachineClasses.
+type KubeVirtMachineClassList struct {
+	// +optional
+	metav1.TypeMeta `json:",inline"`
+
+	// +optional
+	metav1.ListMeta `json:"metadata,omitempty"`
+
+	// +optional
+	Items []KubeVirtMachineClass `json:"items"`
+}
+
+// KubeVirtMachineClassSpec is the specification of a cluster.
+type KubeVirtMachineClassSpec struct {
+	ImageName      string                      `json:"imageName"`
+	Memory         string                      `json:"memory"`
+	Cores          string                      `json:"cores"`
+	Tags           map[string]string           `json:"tags,omitempty"`
+	SecretRef      *corev1.SecretReference     `json:"secretRef,omitempty"`
+	PodNetworkCidr string                      `json:"podNetworkCidr"`
+	Disks          []*KubeVirtDisk             `json:"disks,omitempty"`
+	Networks       []*KubeVirtNetworkInterface `json:"networks,omitempty"`
+	//Region           string                  `json:"region"`
+	//AvailabilityZone string                  `json:"availabilityZone"`
+}
+
+// KubeVirtDisk describes a disk to mount to a KubeVirt VM
+type KubeVirtDisk struct {
+	Name      string `json:"name"`
+	Type      string `json:"type"`
+	VolumeRef string `json:"volumeRef"`
+	Serial    string `json:"serial,omitempty"`
+}
+
+// KubeVirtNetworkInterface describes a network interface for a KubeVirt VM
+type KubeVirtNetworkInterface struct {
+	Name        string `json:"name"`
+	NetworkType string `json:"networkType"`
+	NetworkRef  string `json:"networkRef,omitempty"`
 }

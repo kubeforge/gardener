@@ -1098,6 +1098,11 @@ func (in *CloudProfileSpec) DeepCopyInto(out *CloudProfileSpec) {
 		*out = new(OpenStackProfile)
 		(*in).DeepCopyInto(*out)
 	}
+	if in.KubeVirt != nil {
+		in, out := &in.KubeVirt, &out.KubeVirt
+		*out = new(KubeVirtProfile)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Alicloud != nil {
 		in, out := &in.Alicloud, &out.Alicloud
 		*out = new(AlicloudProfile)

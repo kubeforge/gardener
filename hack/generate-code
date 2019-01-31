@@ -85,7 +85,7 @@ $(dirname $0)/../vendor/k8s.io/code-generator/generate-internal-groups.sh \
 $(dirname $0)/../vendor/k8s.io/code-generator/generate-groups.sh \
   client,lister,informer \
   github.com/gardener/gardener/pkg/client/machine \
-  github.com/kubeforge/machine-controller-manager/pkg/apis \
+  github.com/gardener/machine-controller-manager/pkg/apis \
   machine:v1alpha1 \
   -h <(headers)
 

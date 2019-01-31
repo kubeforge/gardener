@@ -70,7 +70,8 @@ ignored = [
 
 [[constraint]]
   name = "github.com/gardener/machine-controller-manager"
-  version = "0.14.0"
+  source = "github.com/kubeforge/machine-controller-manager"
+  branch = "kubevirt"
 
 [[constraint]]
   name = "k8s.io/helm"
@@ -144,9 +145,9 @@ ignored = [
   source = "github.com/kubevirt/kubevirt"
   version = "0.13.2"
 
-[[constraint]]
-  name = "github.com/kubeforge/machine-controller-manager"
-  branch = "kubevirt"
+#[[constraint]]
+#  name = "github.com/kubeforge/machine-controller-manager"
+#  branch = "kubevirt"
 
 [prune]
   unused-packages = true
