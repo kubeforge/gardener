@@ -134,6 +134,20 @@ ignored = [
   name = "github.com/golang/mock"
   version = "1.2.0"
 
+[[override]]
+  name = "kubevirt.io/containerized-data-importer"
+  source = "github.com/kubevirt/containerized-data-importer"
+  version = "v1.5.1"
+
+[[override]]
+  name = "kubevirt.io/kubevirt"
+  source = "github.com/kubevirt/kubevirt"
+  version = "0.13.2"
+
+[[constraint]]
+  name = "github.com/kubeforge/machine-controller-manager"
+  branch = "kubevirt"
+
 [prune]
   unused-packages = true
   go-tests = true

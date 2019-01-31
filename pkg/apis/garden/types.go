@@ -204,6 +204,34 @@ type GCPMachineImage struct {
 	Image string
 }
 
+// KubeVirtProfile defines certain constraints and definitions for the KubeVirt cloud.
+type KubeVirtProfile struct {
+	// Constraints is an object containing constraints for certain values in the Shoot specification.
+	Constraints KubeVirtConstraints
+}
+
+// KubeVirtConstraints is an object containing constraints for certain values in the Shoot specification.
+type KubeVirtConstraints struct {
+	// DNSProviders contains constraints regarding allowed values of the 'dns.provider' block in the Shoot specification.
+	DNSProviders []DNSProviderConstraint
+	// Kubernetes contains constraints regarding allowed values of the 'kubernetes' block in the Shoot specification.
+	Kubernetes KubernetesConstraints
+	// MachineImages contains constraints regarding allowed values for machine images in the Shoot specification.
+	MachineImages []KubeVirtMachineImage
+	// MachineTypes contains constraints regarding allowed values for machine types in the 'workers' block in the Shoot specification.
+	MachineTypes []KubeVirtMachineType
+	// Zones contains constraints regarding allowed values for 'zones' block in the Shoot specification.
+	Zones []Zone
+}
+
+// OpenStackMachineImage defines the name of the machine image in the OpenStack environment.
+type KubeVirtMachineImage struct {
+	// Name is the name of the image.
+	Name MachineImageName
+	// Image is the technical name of the image.
+	Image string
+}
+
 // OpenStackProfile defines certain constraints and definitions for the OpenStack cloud.
 type OpenStackProfile struct {
 	// Constraints is an object containing constraints for certain values in the Shoot specification.
@@ -343,6 +371,15 @@ type MachineType struct {
 
 // OpenStackMachineType contains certain properties of a machine type in OpenStack
 type OpenStackMachineType struct {
+	MachineType
+	// VolumeType is the type of that volume.
+	VolumeType string
+	// VolumeSize is the amount of disk storage for this machine type.
+	VolumeSize resource.Quantity
+}
+
+// KubeVirtMachineType contains certain properties of a machine type in KubeVirt
+type KubeVirtMachineType struct {
 	MachineType
 	// VolumeType is the type of that volume.
 	VolumeType string
@@ -761,6 +798,9 @@ type Cloud struct {
 	// OpenStack contains the Shoot specification for the OpenStack cloud.
 	// +optional
 	OpenStack *OpenStackCloud
+	// KubeVirt contains the Shoot specification for the KubeVirt cloud.
+	// +optional
+	KubeVirt *KubeVirtCloud
 	// Alicloud contains the Shoot specification for the Alibaba cloud.
 	// +optional
 	Alicloud *Alicloud
@@ -1005,6 +1045,22 @@ type OpenStackWorker struct {
 	Worker
 }
 
+// KubeVirtCloud contains the Shoot specification for KubeVirt.
+type KubeVirtCloud struct {
+	// MachineImage holds information about the machine image to use for all workers.
+	// It will default to the first image stated in the referenced CloudProfile if no
+	// value has been provided.
+	// +optional
+	MachineImage *KubeVirtMachineImage
+	// Workers is a list of worker groups.
+	Workers []KubeVirtWorker
+}
+
+// KubeVirtWorker is the definition of a worker group.
+type KubeVirtWorker struct {
+	Worker
+}
+
 // Local contains the Shoot specification for local provider.
 type Local struct {
 	// Networks holds information about the Kubernetes and infrastructure networks.
@@ -1188,6 +1244,8 @@ const (
 	CloudProviderOpenStack CloudProvider = "openstack"
 	// CloudProviderAlicloud is a constant for the Alibaba cloud provider.
 	CloudProviderAlicloud CloudProvider = "alicloud"
+	// CloudProviderKubeVirt is a constant for the KubeVirt cloud provider.
+	CloudProviderKubeVirt CloudProvider = "kubevirt"
 	// CloudProviderLocal is a constant for the local development provider.
 	CloudProviderLocal CloudProvider = "local"
 )

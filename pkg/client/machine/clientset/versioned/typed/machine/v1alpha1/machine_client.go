@@ -20,7 +20,7 @@ package v1alpha1
 
 import (
 	"github.com/gardener/gardener/pkg/client/machine/clientset/versioned/scheme"
-	v1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
+	v1alpha1 "github.com/kubeforge/machine-controller-manager/pkg/apis/machine/v1alpha1"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
 )
@@ -31,6 +31,7 @@ type MachineV1alpha1Interface interface {
 	AlicloudMachineClassesGetter
 	AzureMachineClassesGetter
 	GCPMachineClassesGetter
+	KubeVirtMachineClassesGetter
 	MachinesGetter
 	MachineDeploymentsGetter
 	MachineSetsGetter
@@ -59,6 +60,10 @@ func (c *MachineV1alpha1Client) AzureMachineClasses(namespace string) AzureMachi
 
 func (c *MachineV1alpha1Client) GCPMachineClasses(namespace string) GCPMachineClassInterface {
 	return newGCPMachineClasses(c, namespace)
+}
+
+func (c *MachineV1alpha1Client) KubeVirtMachineClasses(namespace string) KubeVirtMachineClassInterface {
+	return newKubeVirtMachineClasses(c, namespace)
 }
 
 func (c *MachineV1alpha1Client) Machines(namespace string) MachineInterface {
