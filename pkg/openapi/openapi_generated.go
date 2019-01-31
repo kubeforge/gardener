@@ -2674,6 +2674,12 @@ func schema_pkg_apis_garden_v1beta1_CloudProfileSpec(ref common.ReferenceCallbac
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.OpenStackProfile"),
 						},
 					},
+					"kubevirt": {
+						SchemaProps: spec.SchemaProps{
+							Description: "KubeVirt is the profile specification for the KubeVirt cloud.",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtProfile"),
+						},
+					},
 					"alicloud": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Alicloud is the profile specification for the Alibaba cloud.",
@@ -2697,7 +2703,7 @@ func schema_pkg_apis_garden_v1beta1_CloudProfileSpec(ref common.ReferenceCallbac
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.AWSProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.AlicloudProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.AzureProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.GCPProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.LocalProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.OpenStackProfile"},
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.AWSProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.AlicloudProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.AzureProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.GCPProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.LocalProfile", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.OpenStackProfile"},
 	}
 }
 
@@ -3782,7 +3788,7 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtConstraints(ref common.ReferenceCall
 						},
 					},
 				},
-				Required: []string{"dnsProviders", "kubernetes", "machineImages", "machineTypes", "zones"},
+				Required: []string{"dnsProviders", "kubernetes", "machineImages", "machineTypes"},
 			},
 		},
 		Dependencies: []string{

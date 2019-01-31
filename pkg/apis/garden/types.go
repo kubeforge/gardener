@@ -71,6 +71,9 @@ type CloudProfileSpec struct {
 	// OpenStack is the profile specification for the OpenStack cloud.
 	// +optional
 	OpenStack *OpenStackProfile
+	// KubeVirt is the profile specification for the KubeVirt cloud.
+	// +optional
+	KubeVirt *KubeVirtProfile
 	// Alicloud is the profile specification for the Alibaba cloud.
 	// +optional
 	Alicloud *AlicloudProfile

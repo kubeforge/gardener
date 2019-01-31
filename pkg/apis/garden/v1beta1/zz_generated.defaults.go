@@ -62,6 +62,12 @@ func SetObjectDefaults_CloudProfile(in *CloudProfile) {
 			SetDefaults_MachineType(&a.MachineType)
 		}
 	}
+	if in.Spec.KubeVirt != nil {
+		for i := range in.Spec.KubeVirt.Constraints.MachineTypes {
+			a := &in.Spec.KubeVirt.Constraints.MachineTypes[i]
+			SetDefaults_MachineType(&a.MachineType)
+		}
+	}
 	if in.Spec.Alicloud != nil {
 		for i := range in.Spec.Alicloud.Constraints.MachineTypes {
 			a := &in.Spec.Alicloud.Constraints.MachineTypes[i]
