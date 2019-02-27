@@ -7,6 +7,8 @@
 {{- if .Values.kubernetes.kubelet.enableCSI }}
 --cloud-provider=external \
 --enable-controller-attach-detach=true \
+{{- else if eq .cloudProvider.name "kubevirt" }}
+--cloud-provider=external \
 {{- else }}
 --cloud-provider={{ .Values.cloudProvider.name }} \
 {{- if .Values.cloudProvider.config }}

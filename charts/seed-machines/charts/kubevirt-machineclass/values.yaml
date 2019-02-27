@@ -1,0 +1,15 @@
+machineClasses:
+- name: class-1
+  region: europe-1
+  machineType: medium_2_4
+  keyName: my-ssh-key
+  imageName: coreos-v1.0
+  podNetworkCidr: 100.96.0.0/11
+  cores: "2"
+  memory: 4G
+  tags:
+    kubernetes.io/cluster/shoot-crazy-botany: "1"
+    kubernetes.io/role/node: "1"
+  secret:
+    kubeconfig: bla
+    namespace: blubb
