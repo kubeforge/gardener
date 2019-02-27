@@ -24,7 +24,7 @@ import (
 // See this for more details:
 // https://github.com/kubeforge/cloud-provider-kubevirt/tree/master/pkg/cloudprovider/kubevirt
 func (b *KubeVirtBotanist) GenerateCloudProviderConfig() (string, error) {
-	return string(b.Shoot.Secret.Data[KubeConfig]), nil
+	return string(b.Shoot.Secret.Data[Kubeconfig]), nil
 }
 
 // RefreshCloudProviderConfig refreshes the cloud provider credentials in the existing cloud
@@ -35,7 +35,7 @@ func (b *KubeVirtBotanist) RefreshCloudProviderConfig(currentConfig map[string]s
 		updated   = existing
 		separator = "="
 	)
-	updated = common.ReplaceCloudProviderConfigKey(updated, separator, "kubeConfig", string(b.Shoot.Secret.Data[KubeConfig]))
+	updated = common.ReplaceCloudProviderConfigKey(updated, separator, "kubeconfig", string(b.Shoot.Secret.Data[Kubeconfig]))
 	return map[string]string{
 		common.CloudProviderConfigMapKey: updated,
 	}
@@ -67,7 +67,12 @@ func (b *KubeVirtBotanist) GenerateKubeAPIServerConfig() (map[string]interface{}
 // GenerateCloudControllerManagerConfig generates the cloud provider specific values which are required to
 // render the Deployment manifest of the cloud-controller-manager properly.
 func (b *KubeVirtBotanist) GenerateCloudControllerManagerConfig() (map[string]interface{}, string, error) {
-	return nil, common.CloudControllerManagerDeploymentName, nil
+	chartName := "kubevirt-cloud-controller-manager"
+	conf, err := b.InjectImages(map[string]interface{}{}, b.SeedVersion(), b.ShootVersion(), common.KubevirtCloudControllerManagerImageName)
+	if err != nil {
+		return conf, chartName, err
+	}
+	return conf, chartName, nil
 }
 
 // GenerateCSIConfig generates the configuration for CSI charts
@@ -78,7 +83,10 @@ func (b *KubeVirtBotanist) GenerateCSIConfig() (map[string]interface{}, error) {
 // GenerateKubeControllerManagerConfig generates the cloud provider specific values which are required to
 // render the Deployment manifest of the kube-controller-manager properly.
 func (b *KubeVirtBotanist) GenerateKubeControllerManagerConfig() (map[string]interface{}, error) {
-	return nil, nil
+	conf := map[string]interface{}{
+		"enableCSI": true,
+	}
+	return conf, nil
 }
 
 // GenerateKubeSchedulerConfig generates the cloud provider specific values which are required to render the

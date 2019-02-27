@@ -62,13 +62,17 @@ func DetermineCloudProviderInProfile(spec gardenv1beta1.CloudProfileSpec) (garde
 		numClouds++
 		cloud = gardenv1beta1.CloudProviderAlicloud
 	}
+	if spec.KubeVirt != nil {
+		numClouds++
+		cloud = gardenv1beta1.CloudProviderKubeVirt
+	}
 	if spec.Local != nil {
 		numClouds++
 		cloud = gardenv1beta1.CloudProviderLocal
 	}
 
 	if numClouds != 1 {
-		return "", errors.New("cloud profile must only contain exactly one field of alicloud/aws/azure/gcp/openstack/local")
+		return "", errors.New("cloud profile must only contain exactly one field of aws/azure/gcp/alicloud/openstack/kubevirt/local")
 	}
 	return cloud, nil
 }
@@ -139,6 +143,10 @@ func GetShootCloudProviderWorkers(cloudProvider gardenv1beta1.CloudProvider, sho
 		for _, worker := range cloud.OpenStack.Workers {
 			workers = append(workers, worker.Worker)
 		}
+	case gardenv1beta1.CloudProviderKubeVirt:
+		for _, worker := range cloud.KubeVirt.Workers {
+			workers = append(workers, worker.Worker)
+		}
 	case gardenv1beta1.CloudProviderLocal:
 		workers = append(workers, gardenv1beta1.Worker{
 			Name:          "local",
@@ -196,6 +204,10 @@ func GetMachineTypesFromCloudProfile(cloudProvider gardenv1beta1.CloudProvider, 
 		for _, openStackMachineType := range profile.Spec.OpenStack.Constraints.MachineTypes {
 			machineTypes = append(machineTypes, openStackMachineType.MachineType)
 		}
+	case gardenv1beta1.CloudProviderKubeVirt:
+		for _, kubevirtMachineType := range profile.Spec.KubeVirt.Constraints.MachineTypes {
+			machineTypes = append(machineTypes, kubevirtMachineType.MachineType)
+		}
 	case gardenv1beta1.CloudProviderLocal:
 		machineTypes = append(machineTypes, gardenv1beta1.MachineType{
 			Name: "local",
@@ -233,13 +245,17 @@ func DetermineCloudProviderInShoot(cloudObj gardenv1beta1.Cloud) (gardenv1beta1.
 		numClouds++
 		cloud = gardenv1beta1.CloudProviderAlicloud
 	}
+	if cloudObj.KubeVirt != nil {
+		numClouds++
+		cloud = gardenv1beta1.CloudProviderKubeVirt
+	}
 	if cloudObj.Local != nil {
 		numClouds++
 		cloud = gardenv1beta1.CloudProviderLocal
 	}
 
 	if numClouds != 1 {
-		return "", errors.New("cloud object must only contain exactly one field of aws/azure/gcp/openstack/local")
+		return "", errors.New("cloud object must only contain exactly one field of aws/azure/gcp/openstack/kubevirt/local")
 	}
 	return cloud, nil
 }
@@ -375,6 +391,13 @@ func DetermineMachineImage(cloudProfile gardenv1beta1.CloudProfile, name gardenv
 				return true, &ptr, nil
 			}
 		}
+	case gardenv1beta1.CloudProviderKubeVirt:
+		for _, image := range cloudProfile.Spec.KubeVirt.Constraints.MachineImages {
+			if image.Name == name {
+				ptr := image
+				return true, &ptr, nil
+			}
+		}
 	default:
 		return false, nil, fmt.Errorf("unknown cloud provider %s", cloudProvider)
 	}
@@ -442,6 +465,10 @@ func DetermineLatestKubernetesVersion(cloudProfile gardenv1beta1.CloudProfile, c
 		}
 	case gardenv1beta1.CloudProviderAlicloud:
 		for _, version := range cloudProfile.Spec.Alicloud.Constraints.Kubernetes.Versions {
+			versions = append(versions, version)
+		}
+	case gardenv1beta1.CloudProviderKubeVirt:
+		for _, version := range cloudProfile.Spec.KubeVirt.Constraints.Kubernetes.Versions {
 			versions = append(versions, version)
 		}
 	default:

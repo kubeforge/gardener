@@ -1040,8 +1040,17 @@ type KubeVirtCloud struct {
 	// value has been provided.
 	// +optional
 	MachineImage *KubeVirtMachineImage `json:"machineImage,omitempty"`
+	// Networks holds information about the Kubernetes and infrastructure networks.
+	Networks KubeVirtNetworks `json:"networks"`
 	// Workers is a list of worker groups.
 	Workers []KubeVirtWorker `json:"workers"`
+}
+
+// KubeVirtNetworks holds information about the Kubernetes and infrastructure networks.
+type KubeVirtNetworks struct {
+	K8SNetworks `json:",inline"`
+	// Workers is a list of CIDRs of worker subnets (private) to create (used for the VMs).
+	Workers []CIDR `json:"workers"`
 }
 
 // KubeVirtWorker is the definition of a worker group.

@@ -17,6 +17,7 @@ package kubevirtbotanist
 import (
 	"errors"
 	"fmt"
+
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -26,6 +27,7 @@ import (
 	gardenv1beta1 "github.com/gardener/gardener/pkg/apis/garden/v1beta1"
 	"github.com/gardener/gardener/pkg/operation"
 	"github.com/gardener/gardener/pkg/operation/common"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/clientcmd"
 	kubevirtv1 "kubevirt.io/kubevirt/pkg/api/v1"
 )
@@ -40,19 +42,24 @@ func init() {
 
 // New takes an operation object <o> and creates a new KubeVirtBotanist object.
 func New(o *operation.Operation, purpose string) (*KubeVirtBotanist, error) {
-	var cloudProvider gardenv1beta1.CloudProvider
+	var (
+		cloudProvider gardenv1beta1.CloudProvider
+		secret        *corev1.Secret
+	)
 	switch purpose {
 	case common.CloudPurposeShoot:
 		cloudProvider = o.Shoot.CloudProvider
+		secret = o.Shoot.Secret
 	case common.CloudPurposeSeed:
 		cloudProvider = o.Seed.CloudProvider
+		secret = o.Seed.Secret
 	}
 
 	if cloudProvider != gardenv1beta1.CloudProviderKubeVirt {
 		return nil, errors.New("cannot instantiate an KubeVirt botanist if neither Shoot nor Seed cluster specifies KubeVirt")
 	}
 
-	clientConfig, err := clientcmd.NewClientConfigFromBytes(o.Shoot.Secret.Data[KubeConfig])
+	clientConfig, err := clientcmd.NewClientConfigFromBytes(secret.Data[Kubeconfig])
 	if err != nil {
 		return nil, fmt.Errorf("failed to create clientconfig from bytes: %v", err)
 	}

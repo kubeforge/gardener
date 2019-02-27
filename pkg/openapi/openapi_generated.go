@@ -117,6 +117,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtConstraints":           schema_pkg_apis_garden_v1beta1_KubeVirtConstraints(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage":          schema_pkg_apis_garden_v1beta1_KubeVirtMachineImage(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineType":           schema_pkg_apis_garden_v1beta1_KubeVirtMachineType(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworks":              schema_pkg_apis_garden_v1beta1_KubeVirtNetworks(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtProfile":               schema_pkg_apis_garden_v1beta1_KubeVirtProfile(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker":                schema_pkg_apis_garden_v1beta1_KubeVirtWorker(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeletConfig":                 schema_pkg_apis_garden_v1beta1_KubeletConfig(ref),
@@ -3701,6 +3702,12 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtCloud(ref common.ReferenceCallback) 
 							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage"),
 						},
 					},
+					"networks": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Networks holds information about the Kubernetes and infrastructure networks.",
+							Ref:         ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworks"),
+						},
+					},
 					"workers": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Workers is a list of worker groups.",
@@ -3715,11 +3722,11 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtCloud(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"workers"},
+				Required: []string{"networks", "workers"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker"},
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworks", "github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker"},
 	}
 }
 
@@ -3881,6 +3888,55 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtMachineType(ref common.ReferenceCall
 		},
 		Dependencies: []string{
 			"k8s.io/apimachinery/pkg/api/resource.Quantity"},
+	}
+}
+
+func schema_pkg_apis_garden_v1beta1_KubeVirtNetworks(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtNetworks holds information about the Kubernetes and infrastructure networks.",
+				Properties: map[string]spec.Schema{
+					"nodes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Nodes is the CIDR of the node network.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"pods": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Pods is the CIDR of the pod network.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"services": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Services is the CIDR of the service network.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"workers": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Workers is a list of CIDRs of worker subnets (private) to create (used for the VMs).",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"workers"},
+			},
+		},
+		Dependencies: []string{},
 	}
 }
 
