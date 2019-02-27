@@ -109,6 +109,12 @@ images:
   repository: jerryjxj/alicloud-controller-manager
   tag: "1.9.8"
 
+# KubeVirt Cloud Controller Manger
+- name: kubevirt-cloud-controller-manager
+  sourceRepository: https://github.com/kubeforge/kubevirt-cloud-provider
+  repository: kubeforge/kubevirt-cloud-controller-manager
+  tag: "v0.0.7"
+
 # Shoot optional addons
 - name: kubernetes-dashboard
   sourceRepository: github.com/kubernetes/dashboard

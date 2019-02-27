@@ -11,7 +11,9 @@ rules:
   - azuremachineclasses
   - gcpmachineclasses
   - openstackmachineclasses
+  - alicloudmachineclasses
   - packetmachineclasses
+  - kubevirtmachineclasses
   - machinedeployments
   - machines
   - machinesets
