@@ -27,8 +27,8 @@ type KubeVirtBotanist struct {
 }
 
 const (
-	// KubeConfig is a constant for the key in a cloud provider secret and backup secret that holds the kubeconfig for the
+	// Kubeconfig is a constant for the key in a cloud provider secret and backup secret that holds the kubeconfig for the
 	// infrastructure Kubernetes cluster.
-	KubeConfig = "kubeConfig"
+	Kubeconfig = "kubeconfig"
 	Namespace  = "namespace"
 )

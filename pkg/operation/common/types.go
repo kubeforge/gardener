@@ -464,6 +464,9 @@ const (
 	// AlicloudControllerManagerImageName is the name of the AlicloudControllerManager image.
 	AlicloudControllerManagerImageName = "alicloud-controller-manager"
 
+	// KubevirtCloudControllerManagerImageName is the name of the KubevirtCloudControllerManager image.
+	KubevirtCloudControllerManagerImageName = "kubevirt-cloud-controller-manager"
+
 	// CSI Images
 
 	// CSIAttacherImageName is the name of csi attacher - https://github.com/kubernetes-csi/external-attacher

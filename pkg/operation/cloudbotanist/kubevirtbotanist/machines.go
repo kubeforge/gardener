@@ -16,6 +16,7 @@ package kubevirtbotanist
 
 import (
 	"fmt"
+
 	"github.com/gardener/gardener/pkg/apis/garden/v1beta1"
 
 	"github.com/gardener/gardener/pkg/operation"
@@ -39,7 +40,7 @@ func (b *KubeVirtBotanist) GetMachineClassInfo() (classKind, classPlural, classC
 func (b *KubeVirtBotanist) GenerateMachineClassSecretData() map[string][]byte {
 	return map[string][]byte{
 		machinev1alpha1.KubeVirtNamespace:  b.Shoot.Secret.Data[Namespace],
-		machinev1alpha1.KubeVirtKubeConfig: b.Shoot.Secret.Data[KubeConfig],
+		machinev1alpha1.KubeVirtKubeConfig: b.Shoot.Secret.Data[Kubeconfig],
 	}
 }
 
@@ -79,7 +80,7 @@ func (b *KubeVirtBotanist) GenerateMachineConfig() ([]map[string]interface{}, op
 			"region":         b.Shoot.Info.Spec.Cloud.Region,
 			"cores":          machineType.CPU,
 			"memory":         machineType.Memory,
-			"imageName":      b.Shoot.Info.Spec.Cloud.OpenStack.MachineImage.Image,
+			"imageName":      b.Shoot.Info.Spec.Cloud.KubeVirt.MachineImage.Image,
 			"podNetworkCidr": b.Shoot.GetPodNetwork(),
 			"tags": map[string]string{
 				fmt.Sprintf("kubernetes.io-cluster-%s", b.Shoot.SeedNamespace): "1",
@@ -108,7 +109,7 @@ func (b *KubeVirtBotanist) GenerateMachineConfig() ([]map[string]interface{}, op
 
 		machineClassSpec["name"] = className
 		machineClassSpec["secret"].(map[string]interface{})[Namespace] = string(secretData[machinev1alpha1.KubeVirtNamespace])
-		machineClassSpec["secret"].(map[string]interface{})[KubeConfig] = string(secretData[machinev1alpha1.KubeVirtKubeConfig])
+		machineClassSpec["secret"].(map[string]interface{})[Kubeconfig] = string(secretData[machinev1alpha1.KubeVirtKubeConfig])
 
 		machineClasses = append(machineClasses, machineClassSpec)
 	}

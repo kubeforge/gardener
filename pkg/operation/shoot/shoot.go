@@ -143,6 +143,8 @@ func (s *Shoot) GetK8SNetworks() *gardenv1beta1.K8SNetworks {
 		return &s.Info.Spec.Cloud.OpenStack.Networks.K8SNetworks
 	case gardenv1beta1.CloudProviderAlicloud:
 		return &s.Info.Spec.Cloud.Alicloud.Networks.K8SNetworks
+	case gardenv1beta1.CloudProviderKubeVirt:
+		return &s.Info.Spec.Cloud.KubeVirt.Networks.K8SNetworks
 	case gardenv1beta1.CloudProviderLocal:
 		return &s.Info.Spec.Cloud.Local.Networks.K8SNetworks
 	}
