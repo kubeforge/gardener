@@ -66,11 +66,6 @@ func (b *KubeVirtBotanist) GenerateMachineConfig() ([]map[string]interface{}, op
 	)
 
 	for _, worker := range workers {
-		cloudConfig, err := b.ComputeDownloaderCloudConfig(worker.Name)
-		if err != nil {
-			return nil, nil, err
-		}
-
 		machineType, err := b.getMachineTypeFromString(worker.MachineType)
 		if err != nil {
 			return nil, nil, err
@@ -87,7 +82,7 @@ func (b *KubeVirtBotanist) GenerateMachineConfig() ([]map[string]interface{}, op
 				"kubernetes.io-role-node":                                      "1",
 			},
 			"secret": map[string]interface{}{
-				"cloudConfig": cloudConfig.FileContent("cloud-config.yaml"),
+				"cloudConfig": b.Shoot.CloudConfigMap[worker.Name].Downloader.Content,
 			},
 		}
 
