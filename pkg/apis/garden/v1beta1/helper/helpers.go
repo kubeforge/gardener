@@ -425,6 +425,9 @@ func UpdateMachineImage(cloudProvider gardenv1beta1.CloudProvider, machineImage 
 	case gardenv1beta1.CloudProviderAlicloud:
 		image := machineImage.(*gardenv1beta1.AlicloudMachineImage)
 		return func(s *gardenv1beta1.Cloud) { s.Alicloud.MachineImage = image }
+	case gardenv1beta1.CloudProviderKubeVirt:
+		image := machineImage.(*gardenv1beta1.KubeVirtMachineImage)
+		return func(s *gardenv1beta1.Cloud) { s.KubeVirt.MachineImage = image }
 	}
 
 	return nil
