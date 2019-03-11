@@ -215,6 +215,9 @@ func (v *ValidateShoot) Admit(a admission.Attributes) error {
 					Alicloud: &garden.Alicloud{
 						MachineImage: &garden.AlicloudMachineImage{},
 					},
+					KubeVirt: &garden.KubeVirtCloud{
+						MachineImage: &garden.KubeVirtMachineImage{},
+					},
 				},
 			},
 		}
@@ -286,6 +289,16 @@ func (v *ValidateShoot) Admit(a admission.Attributes) error {
 			shoot.Spec.Cloud.Alicloud.MachineImage = image
 		}
 		allErrs = validateAlicloud(validationContext)
+
+	case garden.CloudProviderKubeVirt:
+		if shoot.Spec.Cloud.KubeVirt.MachineImage == nil {
+			image, err := getKubeVirtMachineImage(shoot, cloudProfile)
+			if err != nil {
+				return apierrors.NewBadRequest(err.Error())
+			}
+			shoot.Spec.Cloud.KubeVirt.MachineImage = image
+		}
+		allErrs = validateKubeVirt(validationContext)
 	}
 
 	dnsErrors, err := validateDNSConfiguration(v.shootLister, shoot.Name, shoot.Spec.DNS)
@@ -563,6 +576,62 @@ func validateAlicloud(c *validationContext) field.ErrorList {
 	return allErrs
 }
 
+func validateKubeVirt(c *validationContext) field.ErrorList {
+	var (
+		allErrs = field.ErrorList{}
+		path    = field.NewPath("spec", "cloud", "kubevirt")
+	)
+
+	allErrs = append(allErrs, admissionutils.ValidateNetworkDisjointedness(c.seed.Spec.Networks, c.shoot.Spec.Cloud.KubeVirt.Networks.K8SNetworks, path.Child("networks"))...)
+
+	if ok, validDNSProviders := validateDNSConstraints(c.cloudProfile.Spec.KubeVirt.Constraints.DNSProviders, c.shoot.Spec.DNS.Provider, c.oldShoot.Spec.DNS.Provider); !ok {
+		allErrs = append(allErrs, field.NotSupported(field.NewPath("spec", "dns", "provider"), c.shoot.Spec.DNS.Provider, validDNSProviders))
+	}
+	if ok, validKubernetesVersions := validateKubernetesVersionConstraints(c.cloudProfile.Spec.KubeVirt.Constraints.Kubernetes.Versions, c.shoot.Spec.Kubernetes.Version, c.oldShoot.Spec.Kubernetes.Version); !ok {
+		allErrs = append(allErrs, field.NotSupported(field.NewPath("spec", "kubernetes", "version"), c.shoot.Spec.Kubernetes.Version, validKubernetesVersions))
+	}
+	if ok, validMachineImages := validateKubeVirtMachineImagesConstraints(c.cloudProfile.Spec.KubeVirt.Constraints.MachineImages, c.shoot.Spec.Cloud.KubeVirt.MachineImage, c.oldShoot.Spec.Cloud.KubeVirt.MachineImage); !ok {
+		allErrs = append(allErrs, field.NotSupported(path.Child("machineImage"), *c.shoot.Spec.Cloud.KubeVirt.MachineImage, validMachineImages))
+	}
+
+	for i, worker := range c.shoot.Spec.Cloud.KubeVirt.Workers {
+		var oldWorker = garden.KubeVirtWorker{}
+		for _, ow := range c.oldShoot.Spec.Cloud.KubeVirt.Workers {
+			if ow.Name == worker.Name {
+				oldWorker = ow
+				break
+			}
+		}
+
+		idxPath := path.Child("workers").Index(i)
+		if ok, validMachineTypes := validateKubeVirtMachineTypes(c.cloudProfile.Spec.KubeVirt.Constraints.MachineTypes, worker.MachineType, oldWorker.MachineType); !ok {
+			allErrs = append(allErrs, field.NotSupported(idxPath.Child("machineType"), worker.MachineType, validMachineTypes))
+		}
+		// if ok, machineType, validZones := validateKubeVirtMachineTypesAvailableInZones(c.cloudProfile.Spec.KubeVirt.Constraints.MachineTypes, worker.MachineType, oldWorker.MachineType, c.shoot.Spec.Cloud.KubeVirt.Zones); !ok {
+		// 	allErrs = append(allErrs, field.Invalid(idxPath.Child("machineType"), worker.MachineType, fmt.Sprintf("only zones %v define machine type %s", validZones, machineType)))
+		// }
+		// if ok, validateVolumeTypes := validateKubeVirtVolumeTypes(c.cloudProfile.Spec.KubeVirt.Constraints.VolumeTypes, worker.VolumeType, oldWorker.VolumeType); !ok {
+		// 	allErrs = append(allErrs, field.NotSupported(idxPath.Child("volumeType"), worker.VolumeType, validateVolumeTypes))
+		// }
+		// if ok, volumeType, validZones := validateKubeVirtVolumeTypesAvailableInZones(c.cloudProfile.Spec.KubeVirt.Constraints.VolumeTypes, worker.VolumeType, oldWorker.VolumeType, c.shoot.Spec.Cloud.Alicloud.Zones); !ok {
+		// 	allErrs = append(allErrs, field.Invalid(idxPath.Child("volumeType"), worker.VolumeType, fmt.Sprintf("only zones %v define volume type %s", validZones, volumeType)))
+		// }
+	}
+
+	// for i, zone := range c.shoot.Spec.Cloud.KubeVirt.Zones {
+	// 	idxPath := path.Child("zones").Index(i)
+	// 	if ok, validZones := validateZones(c.cloudProfile.Spec.KubeVirt.Constraints.Zones, c.shoot.Spec.Cloud.Region, zone); !ok {
+	// 		if len(validZones) == 0 {
+	// 			allErrs = append(allErrs, field.Invalid(idxPath, c.shoot.Spec.Cloud.Region, "this region is not allowed"))
+	// 		} else {
+	// 			allErrs = append(allErrs, field.NotSupported(idxPath, zone, validZones))
+	// 		}
+	// 	}
+	// }
+
+	return allErrs
+}
+
 func validateDNSConstraints(constraints []garden.DNSProviderConstraint, provider, oldProvider garden.DNSProvider) (bool, []string) {
 	if provider == oldProvider {
 		return true, nil
@@ -682,6 +751,34 @@ func validateAlicloudMachineTypesAvailableInZones(constraints []garden.AlicloudM
 
 	return true, "", nil
 }
+
+func validateKubeVirtMachineTypes(constraints []garden.KubeVirtMachineType, machineType, oldMachineType string) (bool, []string) {
+	machineTypes := []garden.MachineType{}
+	for _, t := range constraints {
+		machineTypes = append(machineTypes, t.MachineType)
+	}
+
+	return validateMachineTypes(machineTypes, machineType, oldMachineType)
+}
+
+// To check whether machine type of worker is available in zones of the shoot,
+// because in KubeVirt different zones may have different machine type
+// func validateKubeVirtMachineTypesAvailableInZones(constraints []garden.KubeVirtMachineType, machineType, oldMachineType string, zones []string) (bool, string, []string) {
+// 	if machineType == oldMachineType {
+// 		return true, "", nil
+// 	}
+
+// 	for _, constraint := range constraints {
+// 		if constraint.Name == machineType {
+// 			ok, validValues := zonesCovered(zones, constraint.Zones)
+// 			if !ok {
+// 				return ok, machineType, validValues
+// 			}
+// 		}
+// 	}
+
+// 	return true, "", nil
+// }
 
 // To check whether subzones are all covered by zones
 func zonesCovered(subzones, zones []string) (bool, []string) {
@@ -943,6 +1040,31 @@ func getAliCloudMachineImage(shoot *garden.Shoot, cloudProfile *garden.CloudProf
 }
 
 func validateAlicloudMachineImagesConstraints(constraints []garden.AlicloudMachineImage, image, oldImage *garden.AlicloudMachineImage) (bool, []string) {
+	if apiequality.Semantic.DeepEqual(*image, *oldImage) {
+		return true, nil
+	}
+
+	validValues := []string{}
+
+	for _, v := range constraints {
+		validValues = append(validValues, fmt.Sprintf("%+v", v))
+		if apiequality.Semantic.DeepEqual(v, *image) {
+			return true, nil
+		}
+	}
+
+	return false, validValues
+}
+
+func getKubeVirtMachineImage(shoot *garden.Shoot, cloudProfile *garden.CloudProfile) (*garden.KubeVirtMachineImage, error) {
+	machineImages := cloudProfile.Spec.KubeVirt.Constraints.MachineImages
+	if len(machineImages) != 1 {
+		return nil, errors.New("must provide a value for .spec.cloud.kubevirt.machineImage as the referenced cloud profile contains more than one")
+	}
+	return &machineImages[0], nil
+}
+
+func validateKubeVirtMachineImagesConstraints(constraints []garden.KubeVirtMachineImage, image, oldImage *garden.KubeVirtMachineImage) (bool, []string) {
 	if apiequality.Semantic.DeepEqual(*image, *oldImage) {
 		return true, nil
 	}
