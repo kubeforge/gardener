@@ -22,6 +22,7 @@ import (
 
 	"strconv"
 
+	"github.com/gardener/gardener/pkg/apis/garden"
 	gardenv1beta1 "github.com/gardener/gardener/pkg/apis/garden/v1beta1"
 	"github.com/gardener/gardener/pkg/operation/common"
 	"github.com/gardener/gardener/pkg/utils"
@@ -172,11 +173,23 @@ func GetMachineImageNameFromShoot(cloudProvider gardenv1beta1.CloudProvider, sho
 	case gardenv1beta1.CloudProviderOpenStack:
 		return shoot.Spec.Cloud.OpenStack.MachineImage.Name
 	case gardenv1beta1.CloudProviderKubeVirt:
+		shoot.Spec.Cloud.KubeVirt.MachineImage = &gardenv1beta1.KubeVirtMachineImage{
+			Name:  "CoreOS",
+			Image: "dgonzalez/coreos-cloud-container-disk:1967.4.0",
+		}
 		return shoot.Spec.Cloud.KubeVirt.MachineImage.Name
 	case gardenv1beta1.CloudProviderLocal:
 		return "coreos"
 	}
 	return ""
+}
+
+func getKubeVirtMachineImage(shoot *gardenv1beta1.Shoot, cloudProfile *garden.CloudProfile) (*garden.KubeVirtMachineImage, error) {
+	machineImages := cloudProfile.Spec.KubeVirt.Constraints.MachineImages
+	if len(machineImages) != 1 {
+		return nil, errors.New("must provide a value for .spec.cloud.kubevirt.machineImage as the referenced cloud profile contains more than one")
+	}
+	return &machineImages[0], nil
 }
 
 // GetShootMachineImageName returns the machine image name used in a shoot manifest.

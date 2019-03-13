@@ -590,6 +590,10 @@ func validateKubeVirt(c *validationContext) field.ErrorList {
 	if ok, validKubernetesVersions := validateKubernetesVersionConstraints(c.cloudProfile.Spec.KubeVirt.Constraints.Kubernetes.Versions, c.shoot.Spec.Kubernetes.Version, c.oldShoot.Spec.Kubernetes.Version); !ok {
 		allErrs = append(allErrs, field.NotSupported(field.NewPath("spec", "kubernetes", "version"), c.shoot.Spec.Kubernetes.Version, validKubernetesVersions))
 	}
+	// c.oldShoot.Spec.Cloud.KubeVirt.MachineImage = &garden.KubeVirtMachineImage{
+	// 	Name:  "CoreOS",
+	// 	Image: "dgonzalez/coreos-cloud-container-disk:1967.4.0",
+	// }
 	if ok, validMachineImages := validateKubeVirtMachineImagesConstraints(c.cloudProfile.Spec.KubeVirt.Constraints.MachineImages, c.shoot.Spec.Cloud.KubeVirt.MachineImage, c.oldShoot.Spec.Cloud.KubeVirt.MachineImage); !ok {
 		allErrs = append(allErrs, field.NotSupported(path.Child("machineImage"), *c.shoot.Spec.Cloud.KubeVirt.MachineImage, validMachineImages))
 	}
