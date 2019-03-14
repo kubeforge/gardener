@@ -29,7 +29,7 @@ images:
 - name: machine-controller-manager
   sourceRepository: github.com/kubeforge/machine-controller-manager
   repository: kubeforge/machine-controller-manager
-  tag: "0.14.0-dev"
+  tag: "0.16.0-dev"
 - name: cluster-autoscaler
   sourceRepository: github.com/gardener/autoscaler
   repository: eu.gcr.io/gardener-project/gardener/autoscaler/cluster-autoscaler
