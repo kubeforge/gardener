@@ -29,7 +29,7 @@ images:
 - name: machine-controller-manager
   sourceRepository: github.com/kubeforge/machine-controller-manager
   repository: kubeforge/machine-controller-manager
-  tag: "0.16.0-dev"
+  tag: "0.15.0-kv"
 - name: cluster-autoscaler
   sourceRepository: github.com/gardener/autoscaler
   repository: eu.gcr.io/gardener-project/gardener/autoscaler/cluster-autoscaler
@@ -111,8 +111,8 @@ images:
 
 # KubeVirt Cloud Controller Manger
 - name: kubevirt-cloud-controller-manager
-  sourceRepository: https://github.com/kubeforge/kubevirt-cloud-provider
-  repository: kubeforge/kubevirt-cloud-controller-manager
+  sourceRepository: https://github.com/kubevirt/kubevirt-cloud-provider
+  repository: kubevirt/kubevirt-cloud-controller-manager
   tag: "v0.0.7"
 
 # Shoot optional addons

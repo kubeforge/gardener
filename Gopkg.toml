@@ -71,7 +71,7 @@ ignored = [
 [[constraint]]
   name = "github.com/gardener/machine-controller-manager"
   source = "github.com/kubeforge/machine-controller-manager"
-  branch = "kubevirt"
+  branch = "kubeforge"
 
 [[constraint]]
   name = "k8s.io/helm"
