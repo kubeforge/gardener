@@ -112,7 +112,7 @@ images:
 # KubeVirt Cloud Controller Manger
 - name: kubevirt-cloud-controller-manager
   sourceRepository: https://github.com/kubevirt/kubevirt-cloud-provider
-  repository: kubevirt/kubevirt-cloud-controller-manager
+  repository: kubeforge/kubevirt-cloud-controller-manager
   tag: "v0.0.7"
 
 # Shoot optional addons
