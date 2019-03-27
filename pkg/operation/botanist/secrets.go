@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
+	"strings"
 
 	"github.com/gardener/gardener/pkg/apis/garden"
 	gardenv1beta1 "github.com/gardener/gardener/pkg/apis/garden/v1beta1"
@@ -111,7 +112,7 @@ func (b *Botanist) generateWantedSecrets(basicAuthAPIServer *secrets.BasicAuth, 
 	apiServerIPAddresses, apiServerCertDNSNames = b.appendLoadBalancerIngresses(apiServerIPAddresses, apiServerCertDNSNames)
 
 	if b.Shoot.ExternalClusterDomain != nil {
-		apiServerCertDNSNames = append(apiServerCertDNSNames, *(b.Shoot.Info.Spec.DNS.Domain), *(b.Shoot.ExternalClusterDomain))
+		apiServerCertDNSNames = append(apiServerCertDNSNames, *(b.Shoot.Info.Spec.DNS.Domain), *(b.Shoot.ExternalClusterDomain), b.Shoot.InternalClusterDomain)
 	}
 
 	secretList := []secrets.ConfigInterface{
@@ -688,6 +689,12 @@ func (b *Botanist) DeploySecrets() error {
 
 	if err := b.deployOpenVPNTLSAuthSecret(existingSecretsMap); err != nil {
 		return err
+	}
+
+	// HACK: For the unmanaged DNS provider we override the internalDomain with something like
+	// api.MY_API_SERVER_SERVICE_EXTERNAL_IP.nip.io
+	if b.Operation.APIServerAddress != "" && strings.Contains(b.Shoot.InternalClusterDomain, "nip.io") {
+		b.Shoot.InternalClusterDomain = fmt.Sprintf("api.%s.nip.io", b.Operation.APIServerAddress)
 	}
 
 	wantedSecretsList, err := b.generateWantedSecrets(basicAuthAPIServer, certificateAuthorities)
