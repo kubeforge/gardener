@@ -1051,6 +1051,15 @@ type KubeVirtNetworks struct {
 	K8SNetworks `json:",inline"`
 	// Workers is a list of CIDRs of worker subnets (private) to create (used for the VMs).
 	Workers []CIDR `json:"workers"`
+	// Networks is a list of KubeVirtNetworkInterfaces used for VMs.
+	Networks []KubeVirtNetworkInterface `json:"networks,omitempty"`
+}
+
+// KubeVirtNetworkInterface holds information about the interface to be attached to the VMs.
+type KubeVirtNetworkInterface struct {
+	NetworkName string `json:"networkName,omitempty"`
+	NetworkType string `json:"networkType,omitempty"`
+	NetworkRef  string `json:"networkRef,omitempty"`
 }
 
 // KubeVirtWorker is the definition of a worker group.

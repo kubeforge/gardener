@@ -59,7 +59,8 @@ func (b *KubeVirtBotanist) getMachineTypeFromString(machineType string) (v1beta1
 // the desired availability zones. It returns the computed list of MachineClasses and MachineDeployments.
 func (b *KubeVirtBotanist) GenerateMachineConfig() ([]map[string]interface{}, operation.MachineDeployments, error) {
 	var (
-		workers = b.Shoot.Info.Spec.Cloud.KubeVirt.Workers
+		workers  = b.Shoot.Info.Spec.Cloud.KubeVirt.Workers
+		networks = b.Shoot.Info.Spec.Cloud.KubeVirt.Networks.Networks
 
 		machineDeployments = operation.MachineDeployments{}
 		machineClasses     = []map[string]interface{}{}
@@ -84,6 +85,16 @@ func (b *KubeVirtBotanist) GenerateMachineConfig() ([]map[string]interface{}, op
 			"secret": map[string]interface{}{
 				"cloudConfig": b.Shoot.CloudConfigMap[worker.Name].Downloader.Content,
 			},
+		}
+
+		for _, network := range networks {
+			machineClassSpec["networks"] = []map[string]interface{}{
+				map[string]interface{}{
+					"networkName": network.NetworkName,
+					"networkType": network.NetworkType,
+					"networkRef":  network.NetworkRef,
+				},
+			}
 		}
 
 		var (

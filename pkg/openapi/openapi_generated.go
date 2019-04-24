@@ -117,6 +117,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtConstraints":           schema_pkg_apis_garden_v1beta1_KubeVirtConstraints(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineImage":          schema_pkg_apis_garden_v1beta1_KubeVirtMachineImage(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtMachineType":           schema_pkg_apis_garden_v1beta1_KubeVirtMachineType(ref),
+		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworkInterface":      schema_pkg_apis_garden_v1beta1_KubeVirtNetworkInterface(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworks":              schema_pkg_apis_garden_v1beta1_KubeVirtNetworks(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtProfile":               schema_pkg_apis_garden_v1beta1_KubeVirtProfile(ref),
 		"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtWorker":                schema_pkg_apis_garden_v1beta1_KubeVirtWorker(ref),
@@ -3652,8 +3653,9 @@ func schema_pkg_apis_garden_v1beta1_KubeProxyConfig(ref common.ReferenceCallback
 					},
 					"mode": {
 						SchemaProps: spec.SchemaProps{
-							Type:   []string{"string"},
-							Format: "",
+							Description: "Mode specifies which proxy mode to use. defaults to IPTables.",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 				},
@@ -3891,6 +3893,37 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtMachineType(ref common.ReferenceCall
 	}
 }
 
+func schema_pkg_apis_garden_v1beta1_KubeVirtNetworkInterface(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "KubeVirtNetworkInterface holds information about the interface to be attached to the VMs.",
+				Properties: map[string]spec.Schema{
+					"networkName": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"networkType": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"networkRef": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{},
+	}
+}
+
 func schema_pkg_apis_garden_v1beta1_KubeVirtNetworks(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -3932,11 +3965,25 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtNetworks(ref common.ReferenceCallbac
 							},
 						},
 					},
+					"networks": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Networks is a list of KubeVirtNetworkInterfaces used for VMs.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworkInterface"),
+									},
+								},
+							},
+						},
+					},
 				},
 				Required: []string{"workers"},
 			},
 		},
-		Dependencies: []string{},
+		Dependencies: []string{
+			"github.com/gardener/gardener/pkg/apis/garden/v1beta1.KubeVirtNetworkInterface"},
 	}
 }
 

@@ -32,4 +32,10 @@ spec:
 {{ toYaml $machineClass.tags | indent 4 }}
   {{- end }}
     kubevirt.io/flavor: {{ $machineClass.machineType }}
+  networks:
+  {{- range $network := $machineClass.networks }}
+  - networkName: {{ $network.networkName }}
+    networkRef: {{ $network.networkRef }}
+    networkType: {{ $network.networkType }}
+  {{- end }}
 {{- end }}
