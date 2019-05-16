@@ -3698,6 +3698,13 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtCloud(ref common.ReferenceCallback) 
 			SchemaProps: spec.SchemaProps{
 				Description: "KubeVirtCloud contains the Shoot specification for KubeVirt.",
 				Properties: map[string]spec.Schema{
+					"underkubeLoadbalancing": {
+						SchemaProps: spec.SchemaProps{
+							Description: "UnderkubeLoadbalancing defines if underkube services should be used for loadbalancing",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"machineImage": {
 						SchemaProps: spec.SchemaProps{
 							Description: "MachineImage holds information about the machine image to use for all workers. It will default to the first image stated in the referenced CloudProfile if no value has been provided.",
@@ -3724,7 +3731,7 @@ func schema_pkg_apis_garden_v1beta1_KubeVirtCloud(ref common.ReferenceCallback) 
 						},
 					},
 				},
-				Required: []string{"networks", "workers"},
+				Required: []string{"underkubeLoadbalancing", "networks", "workers"},
 			},
 		},
 		Dependencies: []string{

@@ -3239,6 +3239,7 @@ func Convert_garden_KubeSchedulerConfig_To_v1beta1_KubeSchedulerConfig(in *garde
 }
 
 func autoConvert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(in *KubeVirtCloud, out *garden.KubeVirtCloud, s conversion.Scope) error {
+	out.UnderkubeLoadbalancing = in.UnderkubeLoadbalancing
 	out.MachineImage = (*garden.KubeVirtMachineImage)(unsafe.Pointer(in.MachineImage))
 	if err := Convert_v1beta1_KubeVirtNetworks_To_garden_KubeVirtNetworks(&in.Networks, &out.Networks, s); err != nil {
 		return err
@@ -3263,6 +3264,7 @@ func Convert_v1beta1_KubeVirtCloud_To_garden_KubeVirtCloud(in *KubeVirtCloud, ou
 }
 
 func autoConvert_garden_KubeVirtCloud_To_v1beta1_KubeVirtCloud(in *garden.KubeVirtCloud, out *KubeVirtCloud, s conversion.Scope) error {
+	out.UnderkubeLoadbalancing = in.UnderkubeLoadbalancing
 	out.MachineImage = (*KubeVirtMachineImage)(unsafe.Pointer(in.MachineImage))
 	if err := Convert_garden_KubeVirtNetworks_To_v1beta1_KubeVirtNetworks(&in.Networks, &out.Networks, s); err != nil {
 		return err

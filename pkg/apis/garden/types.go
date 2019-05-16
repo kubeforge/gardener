@@ -1050,6 +1050,8 @@ type OpenStackWorker struct {
 
 // KubeVirtCloud contains the Shoot specification for KubeVirt.
 type KubeVirtCloud struct {
+	// UnderkubeLoadbalancing defines if underkube services should be used for loadbalancing
+	UnderkubeLoadbalancing bool
 	// MachineImage holds information about the machine image to use for all workers.
 	// It will default to the first image stated in the referenced CloudProfile if no
 	// value has been provided.

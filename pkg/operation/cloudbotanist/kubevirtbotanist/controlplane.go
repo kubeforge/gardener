@@ -16,15 +16,25 @@ package kubevirtbotanist
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gardener/gardener/pkg/operation/common"
 )
+
+const cloudProviderConfigTemplate = `kubeconfig : |
+  %s
+loadbalancer:
+  enabled: %t
+`
 
 // GenerateCloudProviderConfig generates the KubeVirt cloud provider config.
 // See this for more details:
 // https://github.com/kubeforge/cloud-provider-kubevirt/tree/master/pkg/cloudprovider/kubevirt
 func (b *KubeVirtBotanist) GenerateCloudProviderConfig() (string, error) {
-	return string(b.Shoot.Secret.Data[Kubeconfig]), nil
+	return fmt.Sprintf(cloudProviderConfigTemplate,
+		strings.ReplaceAll(string(b.Shoot.Secret.Data[Kubeconfig]), "\n", fmt.Sprintf("\n%s", "  ")),
+		b.Shoot.Info.Spec.Cloud.KubeVirt.UnderkubeLoadbalancing,
+	), nil
 }
 
 // RefreshCloudProviderConfig refreshes the cloud provider credentials in the existing cloud
