@@ -113,7 +113,7 @@ images:
 - name: kubevirt-cloud-controller-manager
   sourceRepository: https://github.com/kubevirt/kubevirt-cloud-provider
   repository: kubeforge/kubevirt-cloud-controller-manager
-  tag: "v0.0.8-kv"
+  tag: "v0.0.8-kv2"
 
 # Shoot optional addons
 - name: kubernetes-dashboard

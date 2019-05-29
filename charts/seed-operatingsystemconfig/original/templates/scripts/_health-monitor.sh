@@ -78,7 +78,20 @@
             node_ip_external="$(echo $node_status | jq -r '.addresses[] | select(.type=="ExternalIP") | .address')"
             if [[ -z "$node_ip_internal" ]] && [[ -z "$node_ip_external" ]]; then
               echo "Kubelet has not reported an InternalIP nor an ExternalIP node address yet.";
-              if ! [[ -z ${K8S_NODE_IP_INTERNAL_LAST_SEEN+x} ]]; then
+              # Internal IP has never been seen. Update Node object with IP of eth0 interface
+              if [[ -z ${K8S_NODE_IP_INTERNAL_LAST_SEEN+x} ]]; then
+                echo "Internal IP has never been seen. Update Node object with IP of eth0 interface."
+                K8S_NODE_IP_INTERNAL_LAST_SEEN="$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)"
+                  server="$(kubectl config view -o jsonpath={.clusters[0].cluster.server})"
+                  node_name="$(echo $node_object | jq -r '.items[0].metadata.name')"
+                  if patch_internal_ip $server $node_name $K8S_NODE_IP_INTERNAL_LAST_SEEN; then
+                    echo "Successfully updated Node object."
+                    continue
+                  else
+                    echo "An error occurred while updating the Node object."
+                  fi
+              # Internal IP has been seen before. Check if still valid and update Node object
+              else
                 echo "Check if last seen InternalIP "$K8S_NODE_IP_INTERNAL_LAST_SEEN" can be used";
                 if ip address show | grep $K8S_NODE_IP_INTERNAL_LAST_SEEN > /dev/null; then
                   echo "Last seen InternalIP "$K8S_NODE_IP_INTERNAL_LAST_SEEN" is still up-to-date";
